@@ -100,11 +100,11 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             echo "Deteniendo versión anterior..."
-            pkill -f 'java -jar' || true
+            killall java || true
             sleep 5
             echo "Iniciando nueva versión conectada al RDS..."
             export SPRING_DATASOURCE_URL=jdbc:postgresql://${{ secrets.RDS_ENDPOINT }}:5432/postgres
             export SPRING_DATASOURCE_USERNAME=postgres
             export SPRING_DATASOURCE_PASSWORD=postgres
-            nohup java -jar /home/ec2-user/*-SNAPSHOT.jar > /home/ec2-user/app.log 2>&1 &
+            nohup java -jar /home/ec2-user/*-SNAPSHOT.jar > /home/ec2-user/app.log 2>&1 < /dev/null &
             echo "¡Despliegue completado con éxito!"
