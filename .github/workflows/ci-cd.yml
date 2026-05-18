@@ -34,6 +34,22 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    # --- NUEVO: Levantar base de datos temporal en GitHub ---
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    # --------------------------------------------------------
     steps:
       - name: Checkout del código
         uses: actions/checkout@v3
@@ -49,6 +65,11 @@ jobs:
 
       - name: Ejecutar Tests Unitarios
         run: ./gradlew test
+        # --- NUEVO: Conectar los tests a la base de datos temporal ---
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/postgres
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
 
   deploy:
     name: Deploy
