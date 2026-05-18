@@ -20,8 +20,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponse register(UserRequest request) {
+		String normalizedEmail = request.getCorreo().toLowerCase(java.util.Locale.ROOT);
+		if (userRepository.existsByCorreo(normalizedEmail)) {
+			throw new com.cat.user.service.exceptions.DuplicateUserException(normalizedEmail);
+		}
+
 		UUID id = UUID.randomUUID();
 		User user = UserMapper.toDomain(request, id);
+		user.setCorreo(normalizedEmail);
 		User saved = userRepository.save(user);
 		return UserMapper.toResponse(saved);
 	}

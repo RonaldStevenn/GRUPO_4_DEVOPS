@@ -9,6 +9,8 @@ import com.cat.user.service.domain.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
+	boolean existsByCorreo(String correo);
+
 	User save(User user);
 
 	Optional<User> findById(UUID id);
